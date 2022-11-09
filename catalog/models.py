@@ -102,13 +102,15 @@ class BookInstance(models.Model):
     class Meta:
         ordering = ["due_back"]
 
-
     def __str__(self):
         """
         String for representing the Model object
         """
         return '%s (%s)' % (self.id,self.book.title)
 
+    # def display_book(self):
+    #     return ', '.join([ book.name for book in self.book.all()[:3] ])
+    # display_book.describe = "Books"
 
 class Author(models.Model):
     """
