@@ -16,11 +16,19 @@ def index(request):
     num_instances_available=BookInstance.objects.filter(status__exact='a').count()
     num_authors=Author.objects.count()  # The 'all()' is implied by default.
 
+    # 添加会话的支持
+    num_visited = request.session.get('num_visited', 0)
+    request.session['num_visited'] = num_visited + 1
+
     # Render the HTML template index.html with the data in the context variable
     return render(
         request,
         'index.html',
-        context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors},
+        context={'num_books':num_books,
+                'num_instances':num_instances,
+                'num_instances_available':num_instances_available,
+                'num_visited': num_visited,
+                'num_authors':num_authors},
     )
 # 返回图书列表
 # def books(request):
@@ -39,6 +47,8 @@ class BookListView(generic.ListView):
     # context_object_name = 'book_list'   # your own name for the list as a template variable
     # queryset = Book.objects.filter(title__icontains='war')[:5] # Get 5 books containing the title war
     template_name = 'book_list.html'  # Specify your own template name/location
+    # 添加翻页支持
+    paginate_by = 2
 
 class BookDetailView(generic.DetailView):
     model = Book
@@ -60,4 +70,13 @@ class BookDetailView(generic.DetailView):
     #         context={'book':book_id,}
     #     )
 
+class AuthorListView(generic.ListView):
+    model = Author
+
+    template_name = 'author_list.html'
+
+class AuthorDetailView(generic.DetailView):
+    model = Author
+
+    template_name = 'author_detail.html'
 
